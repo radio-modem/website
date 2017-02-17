@@ -8,8 +8,6 @@ const $ = require('gulp-load-plugins')();
 const $$ = require('load-metalsmith-plugins')();
 const _ = require('lodash');
 const async = require('async');
-const humans = require('humans-generator');
-const robots = require('robots-generator');
 
 gulp.task('img', ['img:clean'], () => gulp.src('img/**')
   .pipe($.changed('dist/img'))
@@ -64,34 +62,10 @@ gulp.task('copy', () => gulp.src([
   .pipe(gulp.dest('dist'))
 );
 
-gulp.task('meta', ['html', 'meta:clean'], done => async.parallel([
-  next => {
-    humans(require('./humans.json'), (err, content) => {
-      if (err) {
-        return;
-      }
-
-      fs.writeFile('dist/humans.txt', content.join('\n'), next);
-    });
-  },
-  next => {
-    robots(require('./robots.json'), (err, content) => {
-      if (err) {
-        return;
-      }
-
-      fs.writeFile('dist/robots.txt', content.join('\n'), next);
-    });
-  }
-], done));
-
-gulp.task('meta:clean', () => del(['dist/humans.txt', 'dist/robots.txt']));
-
 gulp.task('build', [
   'img',
   'html',
-  'copy',
-  'meta'
+  'copy'
 ]);
 
 gulp.task('default', ['build']);
